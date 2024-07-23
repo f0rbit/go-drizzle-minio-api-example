@@ -3,6 +3,7 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from 'postgres';
 import * as schema from "./schema";
 
+if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not set");
 
-const client = postgres("postgres://user:password@0.0.0.0:5432/dbname", { max: 1 });
+const client = postgres(process.env.DATABASE_URL, { max: 1 });
 migrate(drizzle(client, { schema }), { migrationsFolder: "./drizzle" });

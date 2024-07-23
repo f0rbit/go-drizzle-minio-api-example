@@ -3,15 +3,16 @@
 	"version": "0.0.1",
 	"scripts": {
 		"generate": "drizzle-kit generate",
-		"migrate": "drizzle-kit migrate",
+		"migrate": "bun --env-file=../.env drizzle-kit migrate",
+		"migrate:test": "bun --env-file=../.env.test drizzle-kit migrate",
 		"reset": "rm -rf ./drizzle"
 	},
 	"dependencies": {
-		"@electric-sql/pglite": "^0.1.5",
 		"drizzle-orm": "^0.32.0",
 		"postgres": "^3.4.4"
 	},
 	"devDependencies": {
-		"drizzle-kit": "^0.23.0"
+		"drizzle-kit": "^0.23.0",
+		"@types/node": "^20.14.11"
 	}
 }
