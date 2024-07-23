@@ -1,14 +1,22 @@
 all: 
 
-clean-build:
-	docker-compose --env-file .env build db minio
+clean-build: stop
+	docker-compose --env-file .env build test-db db minio
 	docker-compose --env-file .env build app --no-cache
 	docker-compose --env-file .env build test --no-cache
 
-run:
-	docker compose --env-file .env up server
+infrastructure:
+	docker-compose --env-file .env up db minio -d
 
-test:
-	docker-compose --env-file .env.test build db minio
+stop:
+	docker-compose down
+	docker-compose down --remove-orphans
+
+run: stop infrastructure
+	docker-compose --env-file .env up server
+
+test: stop
+	docker-compose --env-file .env.test build test-db minio
+	docker-compose --env-file .env.test up test-db minio -d
 	docker-compose --env-file .env.test build test
 	docker-compose --env-file .env.test run test
