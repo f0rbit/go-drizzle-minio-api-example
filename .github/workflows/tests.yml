@@ -37,17 +37,13 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Build infrastructure
-      working-directory: server/api
       run: docker compose build db minio
 
     - name: Start infrastructure
-      working-directory: server/api
       run: docker compose up db minio -d
 
     - name: Build test image
-      working-directory: server/api
       run: docker compose build test
 
     - name: Run tests
-      working-directory: server/api
       run: docker compose run test
