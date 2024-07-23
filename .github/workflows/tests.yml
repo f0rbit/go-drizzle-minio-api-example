@@ -37,10 +37,10 @@ jobs:
           ${{ runner.os }}-buildx-
 
     - name: Build infrastructure
-      run: docker compose build db minio
+      run: docker compose build test-db minio
 
     - name: Start infrastructure
-      run: docker compose up db minio -d
+      run: docker compose up test-db minio -d
 
     - name: Build test image
       run: docker compose build test
