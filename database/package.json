@@ -1,0 +1,17 @@
+{
+	"name": "chamber-api-db",
+	"version": "0.0.1",
+	"scripts": {
+		"generate": "drizzle-kit generate",
+		"migrate": "drizzle-kit migrate",
+		"reset": "rm -rf ./drizzle"
+	},
+	"dependencies": {
+		"@electric-sql/pglite": "^0.1.5",
+		"drizzle-orm": "^0.32.0",
+		"postgres": "^3.4.4"
+	},
+	"devDependencies": {
+		"drizzle-kit": "^0.23.0"
+	}
+}

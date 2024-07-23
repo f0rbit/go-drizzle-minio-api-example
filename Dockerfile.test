@@ -1,0 +1,43 @@
+# Dockerfile.test
+# syntax=docker/dockerfile:1
+
+# Use Bun image as the base
+FROM oven/bun:latest
+
+# Install necessary packages including curl
+RUN apt-get update && apt-get install -y \
+    curl \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Go
+RUN curl -fsSL https://golang.org/dl/go1.22.1.linux-amd64.tar.gz -o go1.22.1.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz \
+    && rm go1.22.1.linux-amd64.tar.gz
+
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+# Install MinIO client
+RUN curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc \
+    && chmod +x /usr/local/bin/mc
+
+# Set up working directory
+WORKDIR /app
+
+# Copy application files
+COPY app/* ./app/
+RUN cd ./app && go mod download
+
+COPY app/ ./app/
+RUN cd app && go build -o ../docker-app
+
+COPY testing/* ./testing/
+
+# Install Bun dependencies
+RUN cd /app/testing && bun install
+
+# Make sure the script is executable
+RUN chmod +x /app/testing/run_tests.sh
+
+# Run tests
+CMD ["./testing/run_tests.sh"]
