@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+
+	_ "github.com/lib/pq"
 )
 
 var minioClient *minio.Client
@@ -28,6 +31,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/hello", HelloHandler).Methods("GET")
 	r.HandleFunc("/test/fetch", FetchFileHandler).Methods("GET")
+	r.HandleFunc("/test/database", TestDatabaseHandler).Methods("GET")
 
 	// Start server
 	http.Handle("/", r)
@@ -54,4 +58,23 @@ func FetchFileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.ServeContent(w, r, stat.Key, stat.LastModified, object)
+}
+
+func TestDatabaseHandler(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("Error opening database: %q", err)
+		http.Error(w, "Database connection failed", http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	if err = db.Ping(); err != nil {
+		log.Fatalf("Error pinging database: %q", err)
+		http.Error(w, "Database is not running", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, "Database is running")
 }
