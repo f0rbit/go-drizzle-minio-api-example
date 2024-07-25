@@ -25,13 +25,11 @@ RUN curl -fsSL https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/
 WORKDIR /app
 
 # Copy application files
-COPY app/* ./app/
-RUN cd ./app && go mod download
-
 COPY app/ ./app/
+RUN cd app && go mod download
 RUN cd app && go build -o ../docker-app
 
-COPY testing/* ./testing/
+COPY testing/ ./testing/
 
 # Install Bun dependencies
 RUN cd /app/testing && bun install
