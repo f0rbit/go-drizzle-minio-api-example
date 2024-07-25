@@ -1,5 +1,4 @@
 import { describe, it, expect } from "bun:test";
-import { spawn } from "child_process";
 
 describe("Go server endpoints", () => {
 	it("should return 'world' for GET /hello", async () => {
